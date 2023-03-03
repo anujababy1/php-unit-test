@@ -19,7 +19,7 @@ class AuthorController extends Controller
     {
         return request()->validate([
             'title' => 'required',
-            'dob' => 'required',
+            'dob' => '',
         ]);
     }
 }
