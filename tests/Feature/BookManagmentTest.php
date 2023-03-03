@@ -9,9 +9,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class BookReservationTest extends TestCase
 {
     use DatabaseTransactions;
-    /**
-     * A basic test example.
-     */
+    
     // public function test_a_book_can_be_adeed_to_library(): void
     // {
     //     $response = $this->get('/');
@@ -19,9 +17,7 @@ class BookReservationTest extends TestCase
     //     $response->assertStatus(200);
     // }
 
-      /**
-     * A basic test example.
-     */
+     
     /** @test */
     public function a_book_can_be_adeed_to_library(): void
     {
@@ -32,8 +28,11 @@ class BookReservationTest extends TestCase
             'author' => 'Abc'
         ]);
 
-        $response->assertOk();
+        //$response->assertOk();
         $this->assertCount(1,Book::all());
+
+        $book = Book::first();
+        $response->assertRedirect($book->path());
     }
 
     public function test_a_title_is_required(){
@@ -76,5 +75,22 @@ class BookReservationTest extends TestCase
 
             $this->assertEquals('Updated title',$book->title);
             $this->assertEquals('Updated author',$book->author);
+
+            $response->assertRedirect($book->path());
+       }
+
+       /** @test */
+       public function a_book_can_be_deleted(){
+
+            $response = $this->post('/books',[
+                'title'=>'AB',
+                'author'=>'bc'
+            ]);
+            $this->assertCount(1,Book::all());
+
+            $book = Book::first();
+            $response = $this->delete('/books/'.$book->id);
+            $this->assertCount(0,Book::all());
+            $response->assertRedirect('/books');
        }
 }
